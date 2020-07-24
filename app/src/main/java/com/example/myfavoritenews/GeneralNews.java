@@ -30,11 +30,15 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class GeneralNews extends Fragment
-        implements LoaderManager.LoaderCallbacks<List<News>>{
+        implements LoaderManager.LoaderCallbacks<List<News>> {
 
+    //query from The Guardian to find the latest news up to 10.
     private static final String GENERAL_NEWS_REQUEST_URL = "https://content.guardianapis.com/search?order-by=newest&page-size=10&page=1&api-key=06049af9-0dfd-4848-a341-d13236849462";
+
+    //the Id of the Loader
     private static final int GENERAL_NEWS_LOADER = 0;
 
+    //adapter for the list
     private NewsAdapter mGeneralAdapter;
 
     public GeneralNews() {
@@ -51,11 +55,12 @@ public class GeneralNews extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView =  inflater.inflate(R.layout.general_news, container, false);
+        View rootView = inflater.inflate(R.layout.general_news, container, false);
 
+        //set the list and the adapter
         final ListView NewsListView = rootView.findViewById(R.id.general_list);
         NewsListView.setAdapter(mGeneralAdapter);
-        getLoaderManager().restartLoader(GENERAL_NEWS_LOADER, null,  this);
+        getLoaderManager().restartLoader(GENERAL_NEWS_LOADER, null, this);
 
         mGeneralAdapter = new NewsAdapter(rootView.getContext(), new ArrayList<News>());
 
@@ -65,24 +70,24 @@ public class GeneralNews extends Fragment
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 
-                News currentEarthquake = mGeneralAdapter.getItem(position);
+                News currentNews = mGeneralAdapter.getItem(position);
 
                 // Convert the String URL into a URI object (to pass into the Intent constructor)
-                Uri earthquakeUri = Uri.parse(currentEarthquake.getUrl());
+                Uri newsUri = Uri.parse(currentNews.getUrl());
 
-                // Create a new intent to view the earthquake URI
-                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, earthquakeUri);
+                // Create a new intent to view the news URI
+                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, newsUri);
                 // Send the intent to launch a new activity
                 startActivity(websiteIntent);
             }
         });
         ConnectivityManager connMgr = (ConnectivityManager)
-               getActivity().getSystemService(getActivity().CONNECTIVITY_SERVICE);
+                getActivity().getSystemService(getActivity().CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
 
-            getLoaderManager().initLoader(GENERAL_NEWS_LOADER, null,  this);
+            getLoaderManager().initLoader(GENERAL_NEWS_LOADER, null, this);
         } else {
             Toast.makeText(rootView.getContext(), R.string.no_connection, Toast.LENGTH_SHORT).show();
             View loadingIndicator = rootView.findViewById(R.id.general_loading);

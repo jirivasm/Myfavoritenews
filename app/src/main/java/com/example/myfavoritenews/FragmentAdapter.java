@@ -1,16 +1,14 @@
 package com.example.myfavoritenews;
 
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-
+//Fragment adapter to organize and set up the fragments
+//also gave names to the pages to set up the tabs
 public class FragmentAdapter extends FragmentPagerAdapter {
-
 
     public FragmentAdapter(@NonNull FragmentManager fm) {
         super(fm);

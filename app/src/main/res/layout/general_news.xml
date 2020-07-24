@@ -10,8 +10,7 @@
         android:layout_height="match_parent"
         android:divider="@null"
         android:dividerHeight="0dp"
-        android:orientation="vertical"
-        />
+        android:orientation="vertical" />
 
     <ProgressBar
         android:id="@+id/general_loading"
@@ -22,8 +21,8 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/general_news"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        android:src="@drawable/general_news" />
 
 
 </RelativeLayout>

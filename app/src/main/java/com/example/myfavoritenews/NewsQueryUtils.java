@@ -17,9 +17,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,15 +25,16 @@ public class NewsQueryUtils {
 
     public static final String LOG_TAG = NewsQueryUtils.class.getSimpleName();
 
-    NewsQueryUtils(){}
+    NewsQueryUtils() {
+    }
 
     public static ArrayList<News> extractNews(String jasonResponse) {
 
         if (TextUtils.isEmpty(jasonResponse)) {
             return null;
         }
-        // Create an empty ArrayList that we can start adding earthquakes to
-        ArrayList<News> earthquakes = new ArrayList<>();
+        // Create an empty ArrayList that we can start adding news to
+        ArrayList<News> newsArrayList = new ArrayList<>();
 
         // Try to parse the SAMPLE_JSON_RESPONSE. If there's a problem with the way the JSON
         // is formatted, a JSONException exception object will be thrown.
@@ -43,26 +42,25 @@ public class NewsQueryUtils {
         try {
             //convert SAMPLE_JSON_RESPONSE String into a JSONObject
             JSONObject Objects = new JSONObject(jasonResponse);
-            //Extract “results” JSONArray
+            //Extract the Object response that has the array of news(results)
             JSONObject Object = Objects.getJSONObject("response");
-
+            //Extract “results” JSONArray
             JSONArray newsArray = Object.getJSONArray("results");
             //Loop through each feature in the array
-            for(int i = 0; i<newsArray.length();i++) {
-                // Get earthquake JSONObject at position i
+            for (int i = 0; i < newsArray.length(); i++) {
+                // Get news JSONObject at position i
                 JSONObject News = newsArray.getJSONObject(i);
-                //Get “properties” JSONObject
-                //            Extract “mag” for magnitude
-                String section = News.getString("sectionName");
-                //            Extract “place” for location
-                String date = News.getString("webPublicationDate");
-                //            Extract “time” for time
-                String title = News.getString("webTitle");
 
+                //Extract “sectionName” for the section name
+                String section = News.getString("sectionName");
+                // Extract “webPublicationDate” for Complete date and time
+                String date = News.getString("webPublicationDate");
+                //Extract “webTitle” for title of the news
+                String title = News.getString("webTitle");
+                //Extract the url of the news site so user can press the news and go to the news and read more
                 String url = News.getString("webUrl");
 
-
-                earthquakes.add(new News(date,title,section,url));
+                newsArrayList.add(new News(date, title, section, url));
 
             }
 
@@ -74,10 +72,11 @@ public class NewsQueryUtils {
         }
 
         // Return the list of earthquakes
-        return earthquakes;
+        return newsArrayList;
     }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static List<News> fetchEarthquakeData(String requestUrl) {
+    public static List<News> fetchNewsData(String requestUrl) {
         // Create URL object
         URL url = createUrl(requestUrl);
 
@@ -90,11 +89,12 @@ public class NewsQueryUtils {
         }
 
         // Extract relevant fields from the JSON response and create an {@link Event} object
-        List<News> earthquakes = extractNews(jsonResponse);
+        List<News> news = extractNews(jsonResponse);
 
         // Return the {@link Event}
-        return earthquakes;
+        return news;
     }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private static String makeHttpRequest(URL url) throws IOException {
         String jsonResponse = "";
@@ -104,6 +104,7 @@ public class NewsQueryUtils {
             return jsonResponse;
         }
 
+        //Get the connection making sure it is successful
         HttpURLConnection urlConnection = null;
         InputStream inputStream = null;
         try {
@@ -133,6 +134,7 @@ public class NewsQueryUtils {
         }
         return jsonResponse;
     }
+
     private static URL createUrl(String stringUrl) {
         URL url = null;
         try {
@@ -142,6 +144,7 @@ public class NewsQueryUtils {
         }
         return url;
     }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();

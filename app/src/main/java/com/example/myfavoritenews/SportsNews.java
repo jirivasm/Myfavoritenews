@@ -2,13 +2,10 @@ package com.example.myfavoritenews;
 
 
 import android.content.Intent;
-
-
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,23 +18,24 @@ import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static androidx.core.content.ContextCompat.getSystemService;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link CovidNews# newInstance} factory method to
  * create an instance of this fragment.
  */
+//this fragment is similar to the others
 public class SportsNews extends Fragment
-        implements LoaderManager.LoaderCallbacks<List<News>>{
+        implements LoaderManager.LoaderCallbacks<List<News>> {
 
+    //query for the latest sports news
     private static final String SPORTS_NEWS_REQUEST_URL = "https://content.guardianapis.com/search?page=1&page-size=10&q=sports&api-key=06049af9-0dfd-4848-a341-d13236849462";
+    //Loader id
     private static final int SPORTS_NEWS_LOADER = 2;
 
+    //adapter for the list
     private NewsAdapter mSportsAdapter;
 
     public SportsNews() {
@@ -54,11 +52,11 @@ public class SportsNews extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView =  inflater.inflate(R.layout.sports_news, container, false);
+        View rootView = inflater.inflate(R.layout.sports_news, container, false);
 
         final ListView NewsListView = rootView.findViewById(R.id.sports_list);
         NewsListView.setAdapter(mSportsAdapter);
-        getLoaderManager().restartLoader(SPORTS_NEWS_LOADER, null,  this);
+        getLoaderManager().restartLoader(SPORTS_NEWS_LOADER, null, this);
         // Create a new {@link ArrayAdapter} of earthquakes
         mSportsAdapter = new NewsAdapter(rootView.getContext(), new ArrayList<News>());
 
@@ -68,13 +66,13 @@ public class SportsNews extends Fragment
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 
-                News currentEarthquake = mSportsAdapter.getItem(position);
+                News currentNews = mSportsAdapter.getItem(position);
 
                 // Convert the String URL into a URI object (to pass into the Intent constructor)
-                Uri earthquakeUri = Uri.parse(currentEarthquake.getUrl());
+                Uri newsUri = Uri.parse(currentNews.getUrl());
 
                 // Create a new intent to view the earthquake URI
-                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, earthquakeUri);
+                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, newsUri);
                 // Send the intent to launch a new activity
                 startActivity(websiteIntent);
             }
@@ -85,7 +83,7 @@ public class SportsNews extends Fragment
 
         if (networkInfo != null && networkInfo.isConnected()) {
 
-            getLoaderManager().initLoader(SPORTS_NEWS_LOADER, null,  this);
+            getLoaderManager().initLoader(SPORTS_NEWS_LOADER, null, this);
         } else {
             Toast.makeText(rootView.getContext(), R.string.no_connection, Toast.LENGTH_SHORT).show();
             View loadingIndicator = rootView.findViewById(R.id.sports_loading);

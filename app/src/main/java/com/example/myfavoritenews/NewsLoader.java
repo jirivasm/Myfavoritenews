@@ -1,8 +1,10 @@
 package com.example.myfavoritenews;
 
 import android.content.Context;
+import android.os.Build;
 
 
+import androidx.annotation.RequiresApi;
 import androidx.loader.content.AsyncTaskLoader;
 
 import java.util.List;
@@ -32,20 +34,22 @@ public class NewsLoader extends AsyncTaskLoader<List<News>> {
 
     @Override
     protected void onStartLoading() {
-            forceLoad();
+        forceLoad();
     }
 
     /**
      * This is on a background thread.
      */
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public List<News> loadInBackground() {
         if (mUrl == null) {
             return null;
         }
 
-        // Perform the network request, parse the response, and extract a list of earthquakes.
-        List<News> news = NewsQueryUtils.fetchEarthquakeData(mUrl);
+        // Perform the network request, parse the response, and extract a list of news.
+        //for this function is necessary a newer version. KITKAT
+        List<News> news = NewsQueryUtils.fetchNewsData(mUrl);
         return news;
     }
 }
