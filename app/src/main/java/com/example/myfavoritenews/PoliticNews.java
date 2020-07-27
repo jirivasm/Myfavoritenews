@@ -93,7 +93,7 @@ public class PoliticNews extends Fragment
             noConnection.setVisibility(View.GONE);
             getLoaderManager().initLoader(POLITIC_NEWS_LOADER, null, this);
         } else {
-
+            //Check for no internet while the app is open
             View listView = rootView.findViewById(R.id.politic_list_displayed);
             listView.setVisibility(View.GONE);
             TextView noConnection = rootView.findViewById(R.id.politic_nothing_to_display);
@@ -110,7 +110,21 @@ public class PoliticNews extends Fragment
 
     @Override
     public Loader<List<News>> onCreateLoader(int id, Bundle args) {
-        return new NewsLoader(getActivity(), POLITIC_NEWS_REQUEST_URL);
+
+        //Uri builder for easier url.
+        Uri.Builder uriBuilder = new Uri.Builder();
+        uriBuilder.scheme("https");
+        uriBuilder.authority("content.guardianapis.com");
+        uriBuilder.path("search");
+        uriBuilder.appendQueryParameter("order-by","newest");
+        uriBuilder.appendQueryParameter("show-tags","contributor");
+        uriBuilder.appendQueryParameter("page-size","10");
+        uriBuilder.appendQueryParameter("page","1");
+        uriBuilder.appendQueryParameter("q","us politics");
+        uriBuilder.appendQueryParameter("api-key","06049af9-0dfd-4848-a341-d13236849462");
+
+        String url = uriBuilder.toString();
+        return new NewsLoader(getActivity(), url);
     }
 
     @Override
@@ -126,6 +140,7 @@ public class PoliticNews extends Fragment
         loadingIndicator.setVisibility(View.GONE);
 
 
+        //check for no news
         if(data != null && data.isEmpty())
         {
             listView.setVisibility(View.GONE);

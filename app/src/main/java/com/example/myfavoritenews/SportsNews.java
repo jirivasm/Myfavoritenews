@@ -31,8 +31,7 @@ import java.util.List;
 public class SportsNews extends Fragment
         implements LoaderManager.LoaderCallbacks<List<News>> {
 
-    //query for the latest sports news
-    private static final String SPORTS_NEWS_REQUEST_URL = "https://content.guardianapis.com/search?page=1&show-tags=contributor&page-size=10&q=sports&api-key=06049af9-0dfd-4848-a341-d13236849462";
+
     //Loader id
     private static final int SPORTS_NEWS_LOADER = 2;
 
@@ -91,6 +90,7 @@ public class SportsNews extends Fragment
             getLoaderManager().initLoader(SPORTS_NEWS_LOADER, null, this);
         } else {
 
+            //check for no internet
             View listView = rootView.findViewById(R.id.sports_list_displayed);
             listView.setVisibility(View.GONE);
             TextView noConnection = rootView.findViewById(R.id.sports_nothing_to_display);
@@ -107,7 +107,21 @@ public class SportsNews extends Fragment
 
     @Override
     public Loader<List<News>> onCreateLoader(int id, Bundle args) {
-        return new NewsLoader(getActivity(), SPORTS_NEWS_REQUEST_URL);
+
+        //uri builder
+        Uri.Builder uriBuilder = new Uri.Builder();
+        uriBuilder.scheme("https");
+        uriBuilder.authority("content.guardianapis.com");
+        uriBuilder.path("search");
+        uriBuilder.appendQueryParameter("order-by","newest");
+        uriBuilder.appendQueryParameter("show-tags","contributor");
+        uriBuilder.appendQueryParameter("page-size","10");
+        uriBuilder.appendQueryParameter("page","1");
+        uriBuilder.appendQueryParameter("q","sports");
+        uriBuilder.appendQueryParameter("api-key","06049af9-0dfd-4848-a341-d13236849462");
+
+        String url = uriBuilder.toString();
+        return new NewsLoader(getActivity(), url);
     }
 
     @Override
@@ -123,6 +137,7 @@ public class SportsNews extends Fragment
         View listView = getActivity().findViewById(R.id.sports_list_displayed);
         if(data != null && data.isEmpty())
         {
+            //check for no news to display
             listView.setVisibility(View.GONE);
             TextView noConnection = getActivity().findViewById(R.id.sports_nothing_to_display);
             noConnection.setVisibility(View.VISIBLE);

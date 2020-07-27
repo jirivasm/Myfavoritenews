@@ -34,7 +34,6 @@ public class CovidNews extends Fragment
         implements LoaderManager.LoaderCallbacks<List<News>> {
 
     //The query from The Guardian so i get the first 10 news that have covid on them
-    private static final String COVID_NEWS_REQUEST_URL = "https://content.guardianapis.com/search?page=1&show-tags=contributor&page-size=10&q=covid&api-key=06049af9-0dfd-4848-a341-d13236849462";
     private static final String LOG_TAG = NewsLoader.class.getName();
 
     //number id of the loader
@@ -102,6 +101,7 @@ public class CovidNews extends Fragment
             getLoaderManager().initLoader(COVID_NEWS_LOADER, null, this);
         } else {
 
+            //Added Check for when there is no internet connection. while using the app
             View listView = rootView.findViewById(R.id.covid_list_displayed);
             listView.setVisibility(View.GONE);
             TextView noConnection = rootView.findViewById(R.id.covid_nothing_to_display);
@@ -119,7 +119,21 @@ public class CovidNews extends Fragment
     // this function creates the loader and starts to load the news
     @Override
     public Loader<List<News>> onCreateLoader(int id, Bundle args) {
-        return new NewsLoader(getActivity(), COVID_NEWS_REQUEST_URL);
+
+        //Uri Builder for easier query url setup
+        Uri.Builder uriBuilder = new Uri.Builder();
+        uriBuilder.scheme("https");
+        uriBuilder.authority("content.guardianapis.com");
+        uriBuilder.path("search");
+        uriBuilder.appendQueryParameter("order-by", "newest");
+        uriBuilder.appendQueryParameter("show-tags", "contributor");
+        uriBuilder.appendQueryParameter("page-size", "10");
+        uriBuilder.appendQueryParameter("page", "1");
+        uriBuilder.appendQueryParameter("q", "covid");
+        uriBuilder.appendQueryParameter("api-key", "06049af9-0dfd-4848-a341-d13236849462");
+
+        String url = uriBuilder.toString();
+        return new NewsLoader(getActivity(), url);
     }
 
 
@@ -136,9 +150,9 @@ public class CovidNews extends Fragment
             mCovidAdapter.addAll(data);
         }
 
+        //Added Check For when there are no news
         View listView = getActivity().findViewById(R.id.covid_list_displayed);
-        if(data != null && data.isEmpty())
-        {
+        if (data != null && data.isEmpty()) {
             listView.setVisibility(View.GONE);
             TextView noConnection = getActivity().findViewById(R.id.covid_nothing_to_display);
             noConnection.setVisibility(View.VISIBLE);

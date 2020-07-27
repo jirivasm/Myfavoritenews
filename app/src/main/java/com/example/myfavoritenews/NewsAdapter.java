@@ -59,6 +59,8 @@ public class NewsAdapter extends ArrayAdapter<News> {
         TitleView.setText(currNews.getTitle());
 
 
+        //Author Name and check for when its only first name or last name
+        // and if there is no author name don't show
         authorName = currNews.getAuthor();
         String[] nameParts = authorName.split(NAME_SEPARATOR);
 
@@ -72,7 +74,7 @@ public class NewsAdapter extends ArrayAdapter<News> {
         else if(nameParts.length ==1 && authorName != ""){
             AuthorView.setVisibility(View.VISIBLE);
             //otherwise make the author name to be the first name or the last name whichever fits.
-            authorName = parts[0];
+            authorName = nameParts[0];
         }
         else {
             AuthorView.setVisibility(View.GONE);

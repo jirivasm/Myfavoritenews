@@ -60,17 +60,22 @@ public class NewsQueryUtils {
                 //Extract the url of the news site so user can press the news and go to the news and read more
                 String url = News.getString("webUrl");
                 JSONArray tagsArray = News.getJSONArray("tags");
+                //check for author name, separated firs and last name with an "_" so its easier to separate on the newsAdapter
                 String authorName = "";
                 for (int j = 0; j < tagsArray.length(); j++) {
+                    //getting the array for the tags
                     JSONObject author = tagsArray.getJSONObject(j);
+                    //getting the info for the first and last name
                     authorName = author.getString("firstName");
-                    if(authorName != "")
+                    if(authorName != "") {
+                        //sepparating the names with an _ so we can plit it later on the Newsadapter
                         authorName = authorName + "_" + author.getString("lastName");
+                    }
                     else
                         authorName = author.getString("lastName");
                 }
 
-
+                //Adding the news to the list
                 newsArrayList.add(new News(date, title, section,authorName, url));
 
             }
