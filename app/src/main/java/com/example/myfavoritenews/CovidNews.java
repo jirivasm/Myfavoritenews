@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,7 +34,7 @@ public class CovidNews extends Fragment
         implements LoaderManager.LoaderCallbacks<List<News>> {
 
     //The query from The Guardian so i get the first 10 news that have covid on them
-    private static final String COVID_NEWS_REQUEST_URL = "https://content.guardianapis.com/search?page=1&page-size=10&q=covid&api-key=06049af9-0dfd-4848-a341-d13236849462";
+    private static final String COVID_NEWS_REQUEST_URL = "https://content.guardianapis.com/search?page=1&show-tags=contributor&page-size=10&q=covid&api-key=06049af9-0dfd-4848-a341-d13236849462";
     private static final String LOG_TAG = NewsLoader.class.getName();
 
     //number id of the loader
@@ -92,8 +93,21 @@ public class CovidNews extends Fragment
         // otherwise display a message indicating there is no connection
         if (networkInfo != null && networkInfo.isConnected()) {
 
+            View listView = rootView.findViewById(R.id.covid_list_displayed);
+            listView.setVisibility(View.VISIBLE);
+
+            TextView noConnection = rootView.findViewById(R.id.covid_nothing_to_display);
+            noConnection.setVisibility(View.GONE);
+
             getLoaderManager().initLoader(COVID_NEWS_LOADER, null, this);
         } else {
+
+            View listView = rootView.findViewById(R.id.covid_list_displayed);
+            listView.setVisibility(View.GONE);
+            TextView noConnection = rootView.findViewById(R.id.covid_nothing_to_display);
+            noConnection.setVisibility(View.VISIBLE);
+            noConnection.setText(R.string.no_connection);
+
             Toast.makeText(rootView.getContext(), R.string.no_connection, Toast.LENGTH_SHORT).show();
             View loadingIndicator = rootView.findViewById(R.id.covid_loading);
             loadingIndicator.setVisibility(View.GONE);
@@ -113,13 +127,24 @@ public class CovidNews extends Fragment
     //also removes the loading indicator.
     @Override
     public void onLoadFinished(@NonNull androidx.loader.content.Loader<List<News>> loader, List<News> data) {
+
         View loadingIndicator = getActivity().findViewById(R.id.covid_loading);
-        if (mCovidAdapter.isEmpty()) {
+        loadingIndicator.setVisibility(View.GONE);
+        if (data != null && !data.isEmpty()) {
             final ListView NewsListView = getActivity().findViewById(R.id.covid_list);
             NewsListView.setAdapter(mCovidAdapter);
             mCovidAdapter.addAll(data);
         }
-        loadingIndicator.setVisibility(View.GONE);
+
+        View listView = getActivity().findViewById(R.id.covid_list_displayed);
+        if(data != null && data.isEmpty())
+        {
+            listView.setVisibility(View.GONE);
+            TextView noConnection = getActivity().findViewById(R.id.covid_nothing_to_display);
+            noConnection.setVisibility(View.VISIBLE);
+            noConnection.setText(R.string.no_news);
+        }
+
     }
 
     //resets the loader

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,7 +32,7 @@ public class SportsNews extends Fragment
         implements LoaderManager.LoaderCallbacks<List<News>> {
 
     //query for the latest sports news
-    private static final String SPORTS_NEWS_REQUEST_URL = "https://content.guardianapis.com/search?page=1&page-size=10&q=sports&api-key=06049af9-0dfd-4848-a341-d13236849462";
+    private static final String SPORTS_NEWS_REQUEST_URL = "https://content.guardianapis.com/search?page=1&show-tags=contributor&page-size=10&q=sports&api-key=06049af9-0dfd-4848-a341-d13236849462";
     //Loader id
     private static final int SPORTS_NEWS_LOADER = 2;
 
@@ -82,9 +83,20 @@ public class SportsNews extends Fragment
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
+            View listView = rootView.findViewById(R.id.sports_list_displayed);
+            listView.setVisibility(View.VISIBLE);
 
+            TextView noConnection = rootView.findViewById(R.id.sports_nothing_to_display);
+            noConnection.setVisibility(View.GONE);
             getLoaderManager().initLoader(SPORTS_NEWS_LOADER, null, this);
         } else {
+
+            View listView = rootView.findViewById(R.id.sports_list_displayed);
+            listView.setVisibility(View.GONE);
+            TextView noConnection = rootView.findViewById(R.id.sports_nothing_to_display);
+            noConnection.setVisibility(View.VISIBLE);
+            noConnection.setText(R.string.no_connection);
+
             Toast.makeText(rootView.getContext(), R.string.no_connection, Toast.LENGTH_SHORT).show();
             View loadingIndicator = rootView.findViewById(R.id.sports_loading);
             loadingIndicator.setVisibility(View.GONE);
@@ -101,12 +113,21 @@ public class SportsNews extends Fragment
     @Override
     public void onLoadFinished(@NonNull androidx.loader.content.Loader<List<News>> loader, List<News> data) {
         View loadingIndicator = getActivity().findViewById(R.id.sports_loading);
-        if (mSportsAdapter.isEmpty()) {
+        if (data != null && !data.isEmpty()) {
             final ListView NewsListView = getActivity().findViewById(R.id.sports_list);
             NewsListView.setAdapter(mSportsAdapter);
             mSportsAdapter.addAll(data);
         }
         loadingIndicator.setVisibility(View.GONE);
+
+        View listView = getActivity().findViewById(R.id.sports_list_displayed);
+        if(data != null && data.isEmpty())
+        {
+            listView.setVisibility(View.GONE);
+            TextView noConnection = getActivity().findViewById(R.id.sports_nothing_to_display);
+            noConnection.setVisibility(View.VISIBLE);
+            noConnection.setText(R.string.no_news);
+        }
     }
 
     @Override

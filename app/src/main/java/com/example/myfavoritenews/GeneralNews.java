@@ -1,6 +1,7 @@
 package com.example.myfavoritenews;
 
 
+import android.content.Context;
 import android.content.Intent;
 
 
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,14 +35,13 @@ public class GeneralNews extends Fragment
         implements LoaderManager.LoaderCallbacks<List<News>> {
 
     //query from The Guardian to find the latest news up to 10.
-    private static final String GENERAL_NEWS_REQUEST_URL = "https://content.guardianapis.com/search?order-by=newest&page-size=10&page=1&api-key=06049af9-0dfd-4848-a341-d13236849462";
+    private static final String GENERAL_NEWS_REQUEST_URL = "https://content.guardianapis.com/search?order-by=newest&show-tags=contributor&page-size=10&page=1&api-key=06049af9-0dfd-4848-a341-d13236849462";
 
     //the Id of the Loader
     private static final int GENERAL_NEWS_LOADER = 0;
 
     //adapter for the list
     private NewsAdapter mGeneralAdapter;
-
     public GeneralNews() {
         // Required empty public constructor
     }
@@ -88,7 +89,18 @@ public class GeneralNews extends Fragment
         if (networkInfo != null && networkInfo.isConnected()) {
 
             getLoaderManager().initLoader(GENERAL_NEWS_LOADER, null, this);
+            View listView = rootView.findViewById(R.id.general_list_displayed);
+            listView.setVisibility(View.VISIBLE);
+
+            TextView noConnection = rootView.findViewById(R.id.general_nothing_to_display);
+            noConnection.setVisibility(View.GONE);
         } else {
+            View listView = rootView.findViewById(R.id.general_list_displayed);
+            listView.setVisibility(View.GONE);
+            TextView noConnection = rootView.findViewById(R.id.general_nothing_to_display);
+            noConnection.setVisibility(View.VISIBLE);
+            noConnection.setText(R.string.no_connection);
+
             Toast.makeText(rootView.getContext(), R.string.no_connection, Toast.LENGTH_SHORT).show();
             View loadingIndicator = rootView.findViewById(R.id.general_loading);
             loadingIndicator.setVisibility(View.GONE);
@@ -104,13 +116,26 @@ public class GeneralNews extends Fragment
 
     @Override
     public void onLoadFinished(@NonNull androidx.loader.content.Loader<List<News>> loader, List<News> data) {
+
         View loadingIndicator = getActivity().findViewById(R.id.general_loading);
-        if (mGeneralAdapter.isEmpty()) {
+        loadingIndicator.setVisibility(View.GONE);
+        View listView = getActivity().findViewById(R.id.general_list_displayed);
+
+        if (data != null && !data.isEmpty()) {
             final ListView NewsListView = getActivity().findViewById(R.id.general_list);
             NewsListView.setAdapter(mGeneralAdapter);
             mGeneralAdapter.addAll(data);
         }
-        loadingIndicator.setVisibility(View.GONE);
+
+
+        if(data != null && data.isEmpty())
+        {
+            listView.setVisibility(View.GONE);
+            TextView noConnection = getActivity().findViewById(R.id.general_nothing_to_display);
+            noConnection.setVisibility(View.VISIBLE);
+            noConnection.setText(R.string.no_news);
+        }
+
     }
 
     @Override

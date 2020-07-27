@@ -15,9 +15,11 @@ import java.util.List;
 
 public class NewsAdapter extends ArrayAdapter<News> {
     private static final String DATE_SEPARATOR = "T";
+    private static final String NAME_SEPARATOR = "_";
 
     //string to show only the part of the date we want.
     String completeDate;
+    String authorName;
 
     //constructor
     public NewsAdapter(@NonNull Context context, @NonNull List<News> objects) {
@@ -39,6 +41,7 @@ public class NewsAdapter extends ArrayAdapter<News> {
         TextView SectionView = convertView.findViewById(R.id.section_view);
         TextView DateView = convertView.findViewById(R.id.date_view);
         TextView TitleView = convertView.findViewById(R.id.title_view);
+        TextView AuthorView = convertView.findViewById(R.id.author_view);
 
         //setting each section
         SectionView.setText(currNews.getSection());
@@ -54,6 +57,28 @@ public class NewsAdapter extends ArrayAdapter<News> {
 
         //set the title
         TitleView.setText(currNews.getTitle());
+
+
+        authorName = currNews.getAuthor();
+        String[] nameParts = authorName.split(NAME_SEPARATOR);
+
+        //if there is a first and last name
+        if(nameParts.length ==2) {
+            AuthorView.setVisibility(View.VISIBLE);
+            if (nameParts[1] != "" && nameParts[0] != "") {
+                authorName = nameParts[1] + ", " + nameParts[0];
+            }
+        }
+        else if(nameParts.length ==1 && authorName != ""){
+            AuthorView.setVisibility(View.VISIBLE);
+            //otherwise make the author name to be the first name or the last name whichever fits.
+            authorName = parts[0];
+        }
+        else {
+            AuthorView.setVisibility(View.GONE);
+        }
+
+        AuthorView.setText(authorName);
 
         //return the current news
         return convertView;

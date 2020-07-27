@@ -59,8 +59,19 @@ public class NewsQueryUtils {
                 String title = News.getString("webTitle");
                 //Extract the url of the news site so user can press the news and go to the news and read more
                 String url = News.getString("webUrl");
+                JSONArray tagsArray = News.getJSONArray("tags");
+                String authorName = "";
+                for (int j = 0; j < tagsArray.length(); j++) {
+                    JSONObject author = tagsArray.getJSONObject(j);
+                    authorName = author.getString("firstName");
+                    if(authorName != "")
+                        authorName = authorName + "_" + author.getString("lastName");
+                    else
+                        authorName = author.getString("lastName");
+                }
 
-                newsArrayList.add(new News(date, title, section, url));
+
+                newsArrayList.add(new News(date, title, section,authorName, url));
 
             }
 
@@ -123,7 +134,7 @@ public class NewsQueryUtils {
                 Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem retrieving the earthquake JSON results.", e);
+            Log.e(LOG_TAG, "Problem retrieving the news JSON results.", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();

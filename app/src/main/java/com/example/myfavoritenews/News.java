@@ -8,13 +8,16 @@ public class News {
     private String mDate;
     private String mTitle;
     private String mUrl;
+    private String mAuthor;
 
     //constructor to set up the news
-    News(String date, String title, String section, String Url) {
+    News(String date, String title, String section, String Author,String Url) {
         mDate = date;
         mTitle = title;
         mSection = section;
+        mAuthor = Author;
         mUrl = Url;
+
     }
 
     //getter methods to acces the data
@@ -34,4 +37,7 @@ public class News {
         return mUrl;
     }
 
+    public String getAuthor() {
+        return mAuthor;
+    }
 }

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,7 +36,7 @@ public class PoliticNews extends Fragment
         implements LoaderManager.LoaderCallbacks<List<News>> {
 
     //Query for politic news on the US
-    private static final String POLITIC_NEWS_REQUEST_URL = "https://content.guardianapis.com/search?page=1&page-size=10&q=us%20politics&api-key=06049af9-0dfd-4848-a341-d13236849462";
+    private static final String POLITIC_NEWS_REQUEST_URL = "https://content.guardianapis.com/search?page=1&show-tags=contributor&page-size=10&q=us%20politics&api-key=06049af9-0dfd-4848-a341-d13236849462";
     //loader ID
     private static final int POLITIC_NEWS_LOADER = 3;
 
@@ -85,9 +86,20 @@ public class PoliticNews extends Fragment
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
+            View listView = rootView.findViewById(R.id.politic_list_displayed);
+            listView.setVisibility(View.VISIBLE);
 
+            TextView noConnection = rootView.findViewById(R.id.politic_nothing_to_display);
+            noConnection.setVisibility(View.GONE);
             getLoaderManager().initLoader(POLITIC_NEWS_LOADER, null, this);
         } else {
+
+            View listView = rootView.findViewById(R.id.politic_list_displayed);
+            listView.setVisibility(View.GONE);
+            TextView noConnection = rootView.findViewById(R.id.politic_nothing_to_display);
+            noConnection.setVisibility(View.VISIBLE);
+            noConnection.setText(R.string.no_connection);
+
             Toast.makeText(rootView.getContext(), R.string.no_connection, Toast.LENGTH_SHORT).show();
             View loadingIndicator = rootView.findViewById(R.id.politic_loading);
             loadingIndicator.setVisibility(View.GONE);
@@ -104,12 +116,23 @@ public class PoliticNews extends Fragment
     @Override
     public void onLoadFinished(@NonNull androidx.loader.content.Loader<List<News>> loader, List<News> data) {
         View loadingIndicator = getActivity().findViewById(R.id.politic_loading);
-        if (mPoliticAdapter.isEmpty()) {
+        View listView = getActivity().findViewById(R.id.sports_list_displayed);
+        if (data != null && !data.isEmpty()) {
             final ListView NewsListView = getActivity().findViewById(R.id.politic_list);
             NewsListView.setAdapter(mPoliticAdapter);
             mPoliticAdapter.addAll(data);
         }
+
         loadingIndicator.setVisibility(View.GONE);
+
+
+        if(data != null && data.isEmpty())
+        {
+            listView.setVisibility(View.GONE);
+            TextView noConnection = getActivity().findViewById(R.id.sports_nothing_to_display);
+            noConnection.setVisibility(View.VISIBLE);
+            noConnection.setText(R.string.no_news);
+        }
     }
 
     @Override

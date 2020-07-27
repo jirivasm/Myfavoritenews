@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
-            android:textSize="25dp"
+            android:textSize="25sp"
             tools:text="Sports" />/>
 
         <TextView
@@ -28,7 +28,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
-            tools:text="2020-07-19" />/>
+            tools:text="2020-07-19" />
+
+        <TextView
+            android:id="@+id/author_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            tools:text="Author Name" />/>
 
         <TextView
             android:id="@+id/title_view"
@@ -36,7 +43,7 @@
             android:layout_height="wrap_content"
             android:maxLines="3"
             android:textColor="@android:color/black"
-            android:textSize="24dp"
+            android:textSize="24sp"
             android:textStyle="bold"
             tools:text="These is the news title." />
 

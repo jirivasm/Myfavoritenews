@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">My favorite news</string>
-    <string name="no_connection">No internet Connection</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_connection">No Internet Connection</string>
+    <string name="no_news">No News to display</string>
 </resources>
